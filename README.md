@@ -1,1 +1,1 @@
-# Geometrie_discrete
+# Rendu basé image
