@@ -179,40 +179,61 @@ class envMap {
 		this.nbTextures = 0
 		this.textureArray = [];
 		this.indexBuffer = null;
+		this.cubeSize = 10;
 		this.initAll();
 	}
 
 	// --------------------------------------------
 	initAll() {
-		var size = 10.0;
+		var size = this.cubeSize;
+
+
+		/*
+				  e	____________ f
+		Z	   _-*|				_-*	|
+		a _-*_________-*		|
+		 |			|			| b		|
+		 |			|   	|			|
+		 |	Y/h	|	____|_____| g
+		 |		_-*			|	 _-*
+		 |_-*_________|-*  X
+		d						  c
+		*/
+
 		var vertices = [
-			// devant
-			//abcd
-			-size, -size, size,
-			size, -size, size,
+			// derriere
+			// abcd
 			size, -size, -size,
 			-size, -size, -size,
+			-size, -size, size,
+			size, -size, size,
 
 			// gauche
-			//adhg
-			-size, -size, size,
+			// bfgc
 			-size, -size, -size,
 			-size, size, -size,
 			-size, size, size,
+			-size, -size, size,
 
 			// haut
-			//agfb
+			// dcgh
+			size, -size, size,
 			-size, -size, size,
 			-size, size, size,
 			size, size, size,
-			size, -size, size,
 
-			// derriere
+			// devant (la caméra, derrière le lapin)
 			//ghef
+			/*
 			-size, size, size,
 			-size, size, -size,
 			size, size, -size,
+			size, size, size,*/
+			// fehg
+			-size, size, -size,
+			size, size, -size,
 			size, size, size,
+			-size, size, size,
 
 			// bas
 			//hdce
@@ -232,61 +253,60 @@ class envMap {
 
 		var texcoords = [
 			0.0,0.0,
-			0.0,1.0,
 			1.0,0.0,
-			1.0,0.0,
-
-
-			1.0,1.0,
-			1.0,1.0,
-			1.0,0.0,
-			0.0,1.0,
-
-			1.0,1.0,
-			0.0,1.0,
 			1.0,1.0,
 			0.0,1.0,
 
 			0.0,0.0,
-			0.0,1.0,
-			1.0,1.0,
 			1.0,0.0,
-
 			1.0,1.0,
-			1.0,1.0,
-			1.0,0.0,
 			0.0,1.0,
 
+			0.0,0.0,
+			1.0,0.0,
 			1.0,1.0,
 			0.0,1.0,
+
+			0.0,0.0,
+			1.0,0.0,
+			1.0,1.0,
+			0.0,1.0,
+
+			0.0,0.0,
+			1.0,0.0,
+			1.0,1.0,
+			0.0,1.0,
+
+			0.0,0.0,
+			1.0,0.0,
 			1.0,1.0,
 			0.0,1.0,
 		];
 
-		this.indices = [
+		var indices = [
 			// devant
 			0, 1, 2,
-			0, 3, 2,
+			2, 3, 0,
 
 			// gauche
 			4, 5, 6,
-			4, 7, 6,
+			6, 7, 4,
 
 			// haut
 			8, 9, 10,
-			8, 11, 10,
+			10, 11, 8,
 
 			// derriere
 			12, 13, 14,
-			12, 15, 14,
+			14, 15, 12,
 
 			// bas
 			16, 17, 18,
-			16, 19, 18,
+			18, 19, 16,
 
 			// droite
 			20, 21, 22,
-			20, 23, 22,
+			22, 23, 20,
 		];
 
 		this.vBuffer = gl.createBuffer();
@@ -303,7 +323,7 @@ class envMap {
 
 		this.indexBuffer = gl.createBuffer();
 		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
-		gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(texcoords), gl.STATIC_DRAW);
+		gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
 		this.indexBuffer.itemSize = 1;
 		this.indexBuffer.numItems = 36;
 
@@ -314,12 +334,12 @@ class envMap {
 
 	// -------------------------------------
 	initTextures() {
-    var FilesTextures = ["posy.jpg", "posx.jpg", "posz.jpg", "negy.jpg", "negz.jpg", "negx.jpg"];
+    var filesTextures = ["posy.jpg", "posx.jpg", "posz.jpg", "negy.jpg", "negz.jpg", "negx.jpg"];
 
-    for (var i=0; i<FilesTextures.length; i++){
+    for (var i=0; i<filesTextures.length; i++){
         var texImage = new Image();
         var chemin = "./ForbiddenCity/";
-        texImage.src = chemin+FilesTextures[i];
+        texImage.src = chemin + filesTextures[i];
         var texture = gl.createTexture();
         texture.image = texImage;
 
@@ -334,6 +354,9 @@ class envMap {
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
             this.nbTextures ++;
+						console.log("-> "+this.nbTextures+" : "+this.textureArray[this.nbTextures].image.src);
+
+							console.log("-> 0- : "+this.textureArray[0].image.src);
         }
     }
 }
@@ -363,6 +386,9 @@ class envMap {
 		gl.uniformMatrix4fv(this.shader.pMatrixUniform, false, pMatrix);
 		gl.uniformMatrix4fv(this.shader.mvMatrixUniform, false, mvMatrix);
 
+		this.shader.uCubeSize = gl.getUniformLocation(this.shader, "uCubeSize");
+		gl.uniform1f(this.shader.uCubeSize, this.cubeSize)
+
 
 		/////////////////////////////// All sampler
 		// sampler 0
@@ -390,7 +416,7 @@ class envMap {
 		gl.bindTexture(gl.TEXTURE_2D, this.textureArray[4]);
 		this.shader.sampler4 = gl.getUniformLocation(this.shader, "uSampler4");
 		gl.uniform1i(this.shader.sampler4, 4);
-		// sampler 
+		// sampler
 		gl.activeTexture(gl.TEXTURE5);
 		gl.bindTexture(gl.TEXTURE_2D, this.textureArray[5]);
 		this.shader.sampler5 = gl.getUniformLocation(this.shader, "uSampler5");
