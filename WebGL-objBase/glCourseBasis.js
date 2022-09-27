@@ -176,7 +176,7 @@ class envMap {
 		this.shaderName='envmap';
 		this.loaded=-1;
 		this.shader=null;
-		this.nbTexture = 0
+		this.nbTextures = 0
 		this.textureArray = [];
 		this.indexBuffer = null;
 		this.initAll();
@@ -307,14 +307,14 @@ class envMap {
 		this.indexBuffer.itemSize = 1;
 		this.indexBuffer.numItems = 36;
 
-		this.initTexture();
+		this.initTextures();
 		loadShaders(this);
 	}
 
 
 	// -------------------------------------
 	initTextures() {
-    var FilesTextures = ["posy.jpg", "posx.jpg", "posz.jpg", "negy.jpg", "negz.jpg", "negx"];
+    var FilesTextures = ["posy.jpg", "posx.jpg", "posz.jpg", "negy.jpg", "negz.jpg", "negx.jpg"];
 
     for (var i=0; i<FilesTextures.length; i++){
         var texImage = new Image();
@@ -323,12 +323,12 @@ class envMap {
         var texture = gl.createTexture();
         texture.image = texImage;
 
-        this.textures.push(texture);
+        this.textureArray.push(texture);
 
         texture.image.onload = () => {
             gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-            gl.bindTexture(gl.TEXTURE_2D, this.textures[this.nbTextures]);
-            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, this.textures[this.nbTextures].image);
+            gl.bindTexture(gl.TEXTURE_2D, this.textureArray[this.nbTextures]);
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, this.textureArray[this.nbTextures].image);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
@@ -511,7 +511,7 @@ function compileShaders(Obj3D)
 	gl.linkProgram(Obj3D.shader);
 	if (!gl.getProgramParameter(Obj3D.shader, gl.LINK_STATUS)) {
 		console.log("Could not initialise shaders");
-		console.log(gl.getShaderInfoLog(Obj3D.shader));
+		//console.log(gl.getShaderInfoLog(Obj3D.shader));
 	}
 }
 
@@ -527,7 +527,6 @@ function webGLStart() {
 	canvas.onwheel = handleMouseWheel;
 
 	initGL(canvas);
-	initTexture();
 
 	mat4.perspective(45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0, pMatrix);
 	mat4.identity(rotMatrix);
