@@ -176,75 +176,57 @@ class envMap {
 		this.shaderName='envmap';
 		this.loaded=-1;
 		this.shader=null;
+		this.nbTexture = 0
+		this.textureArray = [];
+		this.indexBuffer = null;
 		this.initAll();
 	}
 
 	// --------------------------------------------
 	initAll() {
-		var size=10.0;
+		var size = 10.0;
 		var vertices = [
-			// sol
 			// devant
-			//abc
+			//abcd
 			-size, -size, size,
 			size, -size, size,
 			size, -size, -size,
-			//cda
-			size, -size, -size,
 			-size, -size, -size,
-			-size, -size, size,
 
 			// gauche
-			//adh
+			//adhg
 			-size, -size, size,
 			-size, -size, -size,
 			-size, size, -size,
-			//hga
-			-size, size, -size,
 			-size, size, size,
-			-size, -size, size,
 
 			// haut
-			//agf
+			//agfb
 			-size, -size, size,
 			-size, size, size,
 			size, size, size,
-
-			//fba
-			size, size, size,
 			size, -size, size,
-			-size, -size, size,
 
 			// derriere
-			//ghe
+			//ghef
 			-size, size, size,
 			-size, size, -size,
 			size, size, -size,
-
-			//efg
-			size, size, -size,
 			size, size, size,
-			-size, size, size,
 
 			// bas
-			//hdc
+			//hdce
 			-size, size, -size,
 			-size, -size, -size,
 			size, -size, -size,
-			//ceh
-			size, -size, -size,
 			size, size, -size,
-			-size, size, -size,
 
 			// droite
-			//ecb
+			//ecbf
 			size, size, -size,
 			size, -size, -size,
 			size, -size, size,
-			//bfe
-			size, -size, size,
 			size, size, size,
-			size, size, -size,
 
 		];
 
@@ -252,66 +234,109 @@ class envMap {
 			0.0,0.0,
 			0.0,1.0,
 			1.0,0.0,
-
-			1.0,1.0,
-
 			1.0,0.0,
-			0.0,0.0,
 
 
 			1.0,1.0,
 			1.0,1.0,
 			1.0,0.0,
-			1.0,1.0,
 			0.0,1.0,
-			1.0,1.0,
 
 			1.0,1.0,
 			0.0,1.0,
 			1.0,1.0,
-			1.0,1.0,
 			0.0,1.0,
-			1.0,1.0,
 
 			0.0,0.0,
 			0.0,1.0,
 			1.0,1.0,
-			1.0,1.0,
 			1.0,0.0,
-			0.0,0.0,
-
 
 			1.0,1.0,
 			1.0,1.0,
 			1.0,0.0,
-			1.0,1.0,
 			0.0,1.0,
-			1.0,1.0,
 
 			1.0,1.0,
 			0.0,1.0,
 			1.0,1.0,
-			1.0,1.0,
 			0.0,1.0,
-			1.0,1.0,
 		];
 
+		this.indices = [
+			// devant
+			0, 1, 2,
+			0, 3, 2,
+
+			// gauche
+			4, 5, 6,
+			4, 7, 6,
+
+			// haut
+			8, 9, 10,
+			8, 11, 10,
+
+			// derriere
+			12, 13, 14,
+			12, 15, 14,
+
+			// bas
+			16, 17, 18,
+			16, 19, 18,
+
+			// droite
+			20, 21, 22,
+			20, 23, 22,
+		];
 
 		this.vBuffer = gl.createBuffer();
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.vBuffer);
 		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 		this.vBuffer.itemSize = 3;
-		this.vBuffer.numItems = 36;
+		this.vBuffer.numItems = 24;
 
 		this.tBuffer = gl.createBuffer();
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.tBuffer);
 		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(texcoords), gl.STATIC_DRAW);
 		this.tBuffer.itemSize = 2;
-		this.tBuffer.numItems = 4;
+		this.tBuffer.numItems = 24;
 
+		this.indexBuffer = gl.createBuffer();
+		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
+		gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(texcoords), gl.STATIC_DRAW);
+		this.indexBuffer.itemSize = 1;
+		this.indexBuffer.numItems = 36;
 
+		this.initTexture();
 		loadShaders(this);
 	}
+
+
+	// -------------------------------------
+	initTextures() {
+    var FilesTextures = ["posy.jpg", "posx.jpg", "posz.jpg", "negy.jpg", "negz.jpg", "negx"];
+
+    for (var i=0; i<FilesTextures.length; i++){
+        var texImage = new Image();
+        var chemin = "./ForbiddenCity/";
+        texImage.src = chemin+FilesTextures[i];
+        var texture = gl.createTexture();
+        texture.image = texImage;
+
+        this.textures.push(texture);
+
+        texture.image.onload = () => {
+            gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+            gl.bindTexture(gl.TEXTURE_2D, this.textures[this.nbTextures]);
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, this.textures[this.nbTextures].image);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+            this.nbTextures ++;
+        }
+    }
+}
 
 
 	// --------------------------------------------
@@ -337,6 +362,41 @@ class envMap {
 
 		gl.uniformMatrix4fv(this.shader.pMatrixUniform, false, pMatrix);
 		gl.uniformMatrix4fv(this.shader.mvMatrixUniform, false, mvMatrix);
+
+
+		/////////////////////////////// All sampler
+		// sampler 0
+		gl.activeTexture(gl.TEXTURE0);
+		gl.bindTexture(gl.TEXTURE_2D, this.textureArray[0]);
+		this.shader.sampler0 = gl.getUniformLocation(this.shader, "uSampler0");
+		gl.uniform1i(this.shader.sampler0, 0);
+		// sampler 1
+		gl.activeTexture(gl.TEXTURE1);
+		gl.bindTexture(gl.TEXTURE_2D, this.textureArray[1]);
+		this.shader.sampler1 = gl.getUniformLocation(this.shader, "uSampler1");
+		gl.uniform1i(this.shader.sampler1, 1);
+		// sampler 2
+		gl.activeTexture(gl.TEXTURE2);
+		gl.bindTexture(gl.TEXTURE_2D, this.textureArray[2]);
+		this.shader.sampler2 = gl.getUniformLocation(this.shader, "uSampler2");
+		gl.uniform1i(this.shader.sampler2, 2);
+		// sampler 3
+		gl.activeTexture(gl.TEXTURE3);
+		gl.bindTexture(gl.TEXTURE_2D, this.textureArray[3]);
+		this.shader.sampler3 = gl.getUniformLocation(this.shader, "uSampler3");
+		gl.uniform1i(this.shader.sampler3, 3);
+		// sampler 4
+		gl.activeTexture(gl.TEXTURE4);
+		gl.bindTexture(gl.TEXTURE_2D, this.textureArray[4]);
+		this.shader.sampler4 = gl.getUniformLocation(this.shader, "uSampler4");
+		gl.uniform1i(this.shader.sampler4, 4);
+		// sampler 
+		gl.activeTexture(gl.TEXTURE5);
+		gl.bindTexture(gl.TEXTURE_2D, this.textureArray[5]);
+		this.shader.sampler5 = gl.getUniformLocation(this.shader, "uSampler5");
+		gl.uniform1i(this.shader.sampler5, 5);
+
+
 	}
 
 	// --------------------------------------------
@@ -344,7 +404,9 @@ class envMap {
 		if(this.shader && this.loaded==4) {
 			this.setShadersParams();
 
-			gl.drawArrays(gl.TRIANGLES, 0, this.vBuffer.numItems);
+			gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
+			gl.drawElements(gl.TRIANGLES, this.indexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
+			//gl.drawArrays(gl.TRIANGLES, 0, this.vBuffer.numItems);
 			//gl.drawArrays(gl.LINE_LOOP, 0, this.vBuffer.numItems);
 		}
 	}
