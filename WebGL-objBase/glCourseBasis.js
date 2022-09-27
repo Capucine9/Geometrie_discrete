@@ -517,27 +517,6 @@ function compileShaders(Obj3D)
 
 
 // =====================================================
-function initTexture()
-{
-	var texImage = new Image();
-	texImage.src = "negz.jpg";
-
-	texture = gl.createTexture();
-	texture.image = texImage;
-
-	texImage.onload = function () {
-		gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-		gl.bindTexture(gl.TEXTURE_2D, texture);
-		gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, texture.image);
-		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-		gl.uniform1i(shaderProgram.samplerUniform, 0);
-		gl.activeTexture(gl.TEXTURE0);
-	}
-}
-
-
-// =====================================================
 function webGLStart() {
 
 	var canvas = document.getElementById("WebGL-test");
