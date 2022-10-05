@@ -53,17 +53,37 @@ class objmesh {
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.mesh.normalBuffer);
 		gl.vertexAttribPointer(this.shader.nAttrib, this.mesh.vertexBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
-		this.shader.rMatrixUniform = gl.getUniformLocation(this.shader, "uRMatrix");
+		this.shader.rMatrixUniform = gl.getUniformLocation(this.shader, "uRMatrix");S
+		this.shader.InverseRMatrixUniform = gl.getUniformLocation(this.shader, "uInverseRMatrix");
 		this.shader.mvMatrixUniform = gl.getUniformLocation(this.shader, "uMVMatrix");
 		this.shader.pMatrixUniform = gl.getUniformLocation(this.shader, "uPMatrix");
+
+		// pass all the sampler of the cube
+		this.shader.sampler0 = gl.getUniformLocation(this.shader, "uCubeTexture0");
+		gl.uniform1i(this.shader.sampler0, 0);
+		this.shader.sampler1 = gl.getUniformLocation(this.shader, "uCubeTexture1");
+		gl.uniform1i(this.shader.sampler1, 1);
+		this.shader.sampler2 = gl.getUniformLocation(this.shader, "uCubeTexture2");
+		gl.uniform1i(this.shader.sampler2, 2);
+		this.shader.sampler3 = gl.getUniformLocation(this.shader, "uCubeTexture3");
+		gl.uniform1i(this.shader.sampler3, 3);
+		this.shader.sampler4 = gl.getUniformLocation(this.shader, "uCubeTexture4");
+		gl.uniform1i(this.shader.sampler4, 4);
+		this.shader.sampler5 = gl.getUniformLocation(this.shader, "uCubeTexture5");
+		gl.uniform1i(this.shader.sampler5, 5);
 	}
 
 	// --------------------------------------------
 	setMatrixUniforms() {
+		// calculate the inverse of rotation matrix
+		var tmp = mat4.create();
+		tmp = mat4.transpose(rotMatrix, tmp);
+
 		mat4.identity(mvMatrix);
 		mat4.translate(mvMatrix, distCENTER);
 		mat4.multiply(mvMatrix, rotMatrix);
 		gl.uniformMatrix4fv(this.shader.rMatrixUniform, false, rotMatrix);
+		gl.uniformMatrix4fv(this.shader.InverseRMatrixUniform, false, tmp);
 		gl.uniformMatrix4fv(this.shader.mvMatrixUniform, false, mvMatrix);
 		gl.uniformMatrix4fv(this.shader.pMatrixUniform, false, pMatrix);
 	}
@@ -189,15 +209,15 @@ class envMap {
 
 
 		/*
-				  e	____________ f
-		Z	   _-*|				_-*	|
-		a _-*_________-*		|
-		 |			|			| b		|
-		 |			|   	|			|
-		 |	Y/h	|	____|_____| g
-		 |		_-*			|	 _-*
+				e____________ f
+		Z	 _-*|		_-*	|
+		a _-*_________-*	|
+		 |		|	  | b	|
+		 |		|     |		|
+		 |	Y/h	| ____|_____| g
+		 |	 _-*	  |	 _-*
 		 |_-*_________|-*  X
-		d						  c
+		d			  c
 		*/
 
 		var vertices = [
@@ -345,6 +365,7 @@ class envMap {
 
         this.textureArray.push(texture);
 
+		// TODO : verify texture id (in the array) and linked image
         texture.image.onload = () => {
             gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
             gl.bindTexture(gl.TEXTURE_2D, this.textureArray[this.nbTextures]);
@@ -354,9 +375,6 @@ class envMap {
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
             this.nbTextures ++;
-						console.log("-> "+this.nbTextures+" : "+this.textureArray[this.nbTextures].image.src);
-
-							console.log("-> 0- : "+this.textureArray[0].image.src);
         }
     }
 }
@@ -564,7 +582,7 @@ function webGLStart() {
 
 	ENVMAP = new envMap();
 	PLANE = new plane();
-	OBJ1 = new objmesh('bunny.obj');
+	OBJ1 = new objmesh('bunny.obj',);
 	OBJ2 = new objmesh('porsche.obj');
 	OBJ3 = new objmesh('mustang.obj');
 	OBJ4 = new objmesh('sphere.obj');
@@ -578,8 +596,8 @@ function drawScene() {
 
 	ENVMAP.draw();
 	PLANE.draw();
-	OBJ1.draw();
+	//OBJ1.draw();
 	//OBJ2.draw();
 	//OBJ3.draw();
-	//OBJ4.draw();
+	OBJ4.draw();
 }
