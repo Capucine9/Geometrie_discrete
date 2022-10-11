@@ -241,11 +241,11 @@ class envMap {
 			-size, -size, size,
 
 			// haut
-			// cghd
-			-size, -size, size,
+			// ghdc
 			-size, size, size,
 			size, size, size,
 			size, -size, size,
+			-size, -size, size,
 			
 			
 
@@ -263,11 +263,11 @@ class envMap {
 			-size, size, size,
 
 			// bas
-			//cehd
+			//dceh
+			-size, -size, -size,
 			size, -size, -size,
 			size, size, -size,
 			-size, size, -size,
-			-size, -size, -size,
 
 			// droite
 			//ecbf
@@ -363,11 +363,11 @@ class envMap {
 
 	// -------------------------------------
 	initTextures() {
-    var filesTextures = ["posy.jpg", "posx.jpg", "posz.jpg", "negy.jpg", "negz.jpg", "negx.jpg"];
+    var filesTextures = ["posz.jpg", "posx.jpg", "posy.jpg", "negz.jpg", "negy.jpg", "negx.jpg"];
 
     for (var i=0; i<filesTextures.length; i++){
         var texImage = new Image();
-        var chemin = "./ForbiddenCity/";
+        var chemin = "./textures/urban-skyboxes/CNTower/";
         texImage.src = chemin + filesTextures[i];
         var texture = gl.createTexture();
         texture.image = texImage;
