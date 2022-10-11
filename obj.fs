@@ -14,6 +14,8 @@ uniform sampler2D uCubeTexture3;
 uniform sampler2D uCubeTexture4;
 uniform sampler2D uCubeTexture5;
 
+uniform vec3 uType;
+
 uniform float uCubeSizeTexture;
 
 
@@ -101,8 +103,11 @@ vec4 computeTransparent( vec4 point, vec3 norm ) {
 // ==============================================
 void main(void)
 {
-	//gl_FragColor = computeLambert(pos3D);
-	//gl_FragColor = computeMirror(pos3D, N);	
-	gl_FragColor = computeTransparent(pos3D, N);
+	if ( uType.x == 1.0 )
+		gl_FragColor = computeLambert(pos3D);
+	else if ( uType.z == 1.0 )
+		gl_FragColor = computeMirror(pos3D, N);	
+	else
+		gl_FragColor = computeTransparent(pos3D, N);
 }
 
