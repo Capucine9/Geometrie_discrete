@@ -583,7 +583,7 @@ function webGLStart() {
 
 	initGL(canvas);
 
-	mat4.perspective(45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0, pMatrix);
+	mat4.perspective(45, gl.viewportWidth / gl.viewportHeight, 0.1, 1000.0, pMatrix);
 	mat4.identity(rotMatrix);
 	mat4.rotate(rotMatrix, rotX, [1, 0, 0]);
 	mat4.rotate(rotMatrix, rotY, [0, 0, 1]);
