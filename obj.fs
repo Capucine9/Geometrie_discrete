@@ -81,19 +81,42 @@ vec4 computeMirror( vec4 point, vec3 norm ) {
 	return findTexturePixel(reflected);
 }
 
+float fresnel( float n1_ior, float n2_ior, vec3 dir_incidente, vec3 normal_point) {
+
+	float cos_thetaI = dot( -dir_incidente, normal_point );
+	float sin_thetaI = sin( acos( cos_thetaI ) );
+	float sin_thetaR = ( n1_ior / n2_ior ) * sin_thetaI;	//loi de snell descartes
+	if ( sin_thetaR >= 1.0 ) return 1.0;
+	float cos_thetaR = cos( asin( sin_thetaR ) );
+
+
+	float sqrt_rs = ( n1_ior * cos_thetaI - n2_ior * cos_thetaR ) 
+					/ ( n1_ior * cos_thetaI + n2_ior * cos_thetaR );
+	float sqrt_rp = ( n1_ior * cos_thetaR - n2_ior * cos_thetaI ) 
+					/ ( n1_ior * cos_thetaR + n2_ior * cos_thetaI );
+	return ( sqrt_rs * sqrt_rs + sqrt_rp * sqrt_rp ) * 0.5;
+}
 
 vec4 computeTransparent( vec4 point, vec3 norm ) {
 	vec3 incident_eye = normalize(vec3(point));
 	vec3 normal = normalize(N);
-
-	vec3 refracted = refract(incident_eye, normal, 1.0/(1.1));
+	// Eau = 1.33
+	// Glace = 1.31
+	// Rubis = 1.78
+	// Verre = 1.5
+	float ior_air = 1.0;
+	float ior_obj = 1.1;
+	vec3 refracted = refract(incident_eye, normal, ior_air/(ior_obj));
 	refracted = vec3(uInverseRMatrix * vec4(refracted, 0.0));
 	refracted = vec3(findTexturePixel(refracted));
 
 	vec3 reflected = vec3(computeMirror(point, norm));
 
-	float coef = 0.8;
-	return vec4(refracted*coef + reflected*(1.0-coef),1.0);
+	float coef = fresnel(ior_air, ior_obj, incident_eye, normal);
+
+
+
+	return vec4(refracted*(1.0-coef) + reflected*coef,1.0);
 }
 
 

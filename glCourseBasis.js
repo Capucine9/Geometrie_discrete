@@ -373,7 +373,8 @@ class envMap {
         var texImage = new Image();
         //var chemin = "./textures/urban-skyboxes/CNTower/";
 		//var chemin = "./textures/urban-skyboxes/ForbiddenCity/";
-		var chemin = "./textures/park-skyboxes/Skansen/";
+		//var chemin = "./textures/park-skyboxes/Skansen/";
+		var chemin = "./textures/SanFrancisco3/";
         texImage.src = chemin + filesTextures[i];
         var texture = gl.createTexture();
         texture.image = texImage;
