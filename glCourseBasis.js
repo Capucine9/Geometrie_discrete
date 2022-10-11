@@ -369,7 +369,7 @@ class envMap {
         var texImage = new Image();
         //var chemin = "./textures/urban-skyboxes/CNTower/";
 		//var chemin = "./textures/urban-skyboxes/ForbiddenCity/";
-		var chemin = "./textures/urban-skyboxes/Medborgarplatsen/";
+		var chemin = "./textures/park-skyboxes/Skansen/";
         texImage.src = chemin + filesTextures[i];
         var texture = gl.createTexture();
         texture.image = texImage;
