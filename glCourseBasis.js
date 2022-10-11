@@ -611,4 +611,6 @@ function drawScene() {
 	//OBJ2.draw();
 	//OBJ3.draw();
 	OBJ4.draw();
+	var type_material = document.querySelector('input[name="type"]:checked').value;
+	console.log(type_material);
 }

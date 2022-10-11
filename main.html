@@ -9,12 +9,30 @@
 	<script type="text/javascript" src="glCourseBasis.js"></script>
 	<script type="text/javascript" src="objLoader.js"></script>
 
+	<!--fiche css-->
+	<style> 
+		fieldset{
+			position: absolute;
+		}
+	</style>
+
 </head>
 
 
 <body onload="webGLStart();">
 	<canvas id="WebGL-test" style="border:none;" width="800" height="600"></canvas>
 	<br><br>
+
+	<fieldset>
+		<legend>Material type</legend>
+		<input type="radio" name="type" value="opaque" checked/><label for="opaque">Opaque</label>
+		<input type="radio" name="type" value="transparent"/><label for="transparent"></label>Transparent</label>
+		<input type="radio" name="type" value="miroir"/><label for="miroir"></label>Mirror</label>
+	</fieldset>
+
+
+
+
 </body>
 
 
