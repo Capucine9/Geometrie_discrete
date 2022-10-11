@@ -21,7 +21,7 @@ var PLANE = null;
 // EnvMap
 var ENVMAP = null;
 
-var CubeSize = 10.0;
+var CubeSize = 50.0;
 
 // =====================================================
 // OBJET 3D, lecture fichier obj
