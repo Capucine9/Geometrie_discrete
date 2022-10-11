@@ -22,6 +22,7 @@ var PLANE = null;
 var ENVMAP = null;
 
 var CubeSize = 50.0;
+var type = new Float32Array([1.0,0.0,0.0]);
 
 // =====================================================
 // OBJET 3D, lecture fichier obj
@@ -36,7 +37,6 @@ class objmesh {
 		this.loaded = -1;
 		this.shader = null;
 		this.mesh = null;
-		this.type = new Float32Array([1.0,0.0,0.0]);
 
 		loadObjFile(this);
 		loadShaders(this);
@@ -63,7 +63,7 @@ class objmesh {
 
 		
 		this.shader.uType = gl.getUniformLocation(this.shader, "uType");
-		gl.uniform3fv(this.shader.uType, this.type);
+		gl.uniform3fv(this.shader.uType, type);
 
 		this.shader.uCubeSizeTexture = gl.getUniformLocation(this.shader, "uCubeSizeTexture");
 		gl.uniform1f(this.shader.uCubeSizeTexture, CubeSize)
@@ -616,13 +616,13 @@ function drawScene() {
 	//OBJ3.draw();
 	OBJ4.draw();
 	
+	// Recuperation du type de l'objet
 	var type_material = document.querySelector('input[name="type"]:checked').value;
 	if ( type_material == "opaque")
-		OBJ4.type = new Float32Array([1.0,0.0,0.0])
+		type = new Float32Array([1.0,0.0,0.0])
 	else if ( type_material == "transparent")
-		OBJ4.type = new Float32Array([0.0,1.0,0.0])
+		type = new Float32Array([0.0,1.0,0.0])
 	else if ( type_material == "miroir")
-		OBJ4.type = new Float32Array([0.0,0.0,1.0])
+		type = new Float32Array([0.0,0.0,1.0])
 	
-	console.log(type_material);
 }

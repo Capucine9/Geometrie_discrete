@@ -105,9 +105,9 @@ void main(void)
 {
 	if ( uType.x == 1.0 )
 		gl_FragColor = computeLambert(pos3D);
-	else if ( uType.z == 1.0 )
-		gl_FragColor = computeMirror(pos3D, N);	
-	else
+	else if ( uType.y == 1.0 )
 		gl_FragColor = computeTransparent(pos3D, N);
+	else
+		gl_FragColor = computeMirror(pos3D, N);	
 }
 
