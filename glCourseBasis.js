@@ -241,11 +241,13 @@ class envMap {
 			-size, -size, size,
 
 			// haut
-			// dcgh
-			size, -size, size,
+			// cghd
 			-size, -size, size,
 			-size, size, size,
 			size, size, size,
+			size, -size, size,
+			
+			
 
 			// devant (la caméra, derrière le lapin)
 			//ghef
@@ -261,11 +263,11 @@ class envMap {
 			-size, size, size,
 
 			// bas
-			//hdce
-			-size, size, -size,
-			-size, -size, -size,
+			//cehd
 			size, -size, -size,
 			size, size, -size,
+			-size, size, -size,
+			-size, -size, -size,
 
 			// droite
 			//ecbf
@@ -289,9 +291,9 @@ class envMap {
 
 			// haut
 			0.0,0.0,
-			0.0,1.0,
 			1.0,0.0,
 			1.0,1.0,
+			0.0,1.0,
 
 			0.0,0.0,
 			1.0,0.0,
@@ -299,10 +301,10 @@ class envMap {
 			0.0,1.0,
 
 			// bas
-			1.0,1.0,
-			0.0,1.0,
 			0.0,0.0,
 			1.0,0.0,
+			1.0,1.0,
+			0.0,1.0,
 
 			0.0,0.0,
 			1.0,0.0,
