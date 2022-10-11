@@ -4,13 +4,17 @@ precision mediump float;
 varying vec4 pos3D;
 varying vec3 N;
 
+// can be calculated in the shader
 uniform mat4 uInverseRMatrix;
+
 uniform sampler2D uCubeTexture0;
 uniform sampler2D uCubeTexture1;
 uniform sampler2D uCubeTexture2;
 uniform sampler2D uCubeTexture3;
 uniform sampler2D uCubeTexture4;
 uniform sampler2D uCubeTexture5;
+
+uniform float uCubeSizeTexture;
 
 
 void calulateTexture(sampler2D s, vec3 reflected, int case) {
@@ -80,32 +84,65 @@ void main(void)
 	vec3 reflected = reflect(incident_eye, normal);
 	// convert from eye to world space
 	reflected = vec3(uInverseRMatrix * vec4(reflected, 0.0));
-	
+	vec3 pos3D_scene = vec3(uInverseRMatrix * pos3D);
 
 	gl_FragColor = vec4(0.2,0.4,0.2,1.0);
 
-	// if ray go to the right
-	if ( reflected.x > 0.5 && reflected.y < 0.5 && reflected.y > -0.5 && reflected.z < 0.5 && reflected.z > -0.5 )
-			calulateTexture(uCubeTexture5, reflected, 1);
-	// if ray go to the left
-	else if ( reflected.x < -0.5 && reflected.y < 0.5 && reflected.y > -0.5 && reflected.z < 0.5 && reflected.z > -0.5 )
-			calulateTexture(uCubeTexture1, reflected, 1);
+
+	// pnt.z + t*dir.z = plan.z     =>    t = (plan.z - pnt.z)/dir.z
 	
-	// if ray go to the forward
-	else if ( reflected.y > 0.5 && reflected.x < 0.5 && reflected.x > -0.5 && reflected.z < 0.5 && reflected.z > -0.5 )
-		calulateTexture(uCubeTexture0, reflected, 2);
+	float tBottom = (-uCubeSizeTexture - pos3D_scene.z)/reflected.z;
+	float tTop = (uCubeSizeTexture - pos3D_scene.z)/reflected.z;
 
-	// if ray go to the backwards
-	else if (reflected.y < -0.5 && reflected.x < 0.5 && reflected.x > -0.5 && reflected.z < 0.5 && reflected.z > -0.5 )
-		calulateTexture(uCubeTexture3, reflected, 2);
+	float tRight = (uCubeSizeTexture - pos3D_scene.x)/reflected.x;
+	float tLeft = (-uCubeSizeTexture - pos3D_scene.x)/reflected.x;
 
-	// if ray go to the top
-	else if ( reflected.z > 0.5 && reflected.x < 0.5 && reflected.x > -0.5 && reflected.y < 0.5 && reflected.y > -0.5 )
-		calulateTexture(uCubeTexture2, reflected, 3);
+	float tForward = (uCubeSizeTexture - pos3D_scene.y)/reflected.y;
+	float tBackward = (-uCubeSizeTexture - pos3D_scene.y)/reflected.y;
 
-	// if ray go to the bottom
-	else if (reflected.z < -0.5 && reflected.x < 0.5 && reflected.x > -0.5 && reflected.y < 0.5 && reflected.y > -0.5 ) 
-		calulateTexture(uCubeTexture4, reflected, 3);
+	vec3 interBottom = pos3D_scene + reflected * tBottom;
+	if (  tBottom > 0.0 && interBottom.z == -uCubeSizeTexture && abs(interBottom.x) <= uCubeSizeTexture && abs(interBottom.y) <= uCubeSizeTexture )
+		gl_FragColor = texture2D(uCubeTexture4, vec2(0.5 + interBottom.x/(2.0*uCubeSizeTexture), 0.5 + interBottom.y/(2.0*uCubeSizeTexture)));
+		//gl_FragColor = vec4(0.8,0.4,0.2,1.0);
+		
 
+
+
+
+
+
+
+	// // if ray go to the right
+	// if ( reflected.x > 0.5 && reflected.y < 0.5 && reflected.y > -0.5 && reflected.z < 0.5 && reflected.z > -0.5 )
+	// 		calulateTexture(uCubeTexture5, reflected, 1);
+	// // if ray go to the left
+	// else if ( reflected.x < -0.5 && reflected.y < 0.5 && reflected.y > -0.5 && reflected.z < 0.5 && reflected.z > -0.5 )
+	// 		calulateTexture(uCubeTexture1, reflected, 1);
+	
+	// // if ray go to the forward
+	// else if ( reflected.y > 0.5 && reflected.x < 0.5 && reflected.x > -0.5 && reflected.z < 0.5 && reflected.z > -0.5 )
+	// 	calulateTexture(uCubeTexture0, reflected, 2);
+
+	// // if ray go to the backwards
+	// else if (reflected.y < -0.5 && reflected.x < 0.5 && reflected.x > -0.5 && reflected.z < 0.5 && reflected.z > -0.5 )
+	// 	calulateTexture(uCubeTexture3, reflected, 2);
+
+	// // if ray go to the top
+	// else if ( reflected.z > 0.5 && reflected.x < 0.5 && reflected.x > -0.5 && reflected.y < 0.5 && reflected.y > -0.5 )
+	// 	calulateTexture(uCubeTexture2, reflected, 3);
+
+	// // if ray go to the bottom
+	// else if (reflected.z < -0.5 && reflected.x < 0.5 && reflected.x > -0.5 && reflected.y < 0.5 && reflected.y > -0.5 ) 
+	// 	calulateTexture(uCubeTexture4, reflected, 3);
+	
+	 
+	// //if (reflected.z < -0.5 && reflected.x < 0.5 && reflected.x > -0.5 && reflected.y < 0.5 && reflected.y > -0.5 ) 
+	// 	//gl_FragColor = vec4(0.3,0.1,0.1,1.0);
+
+	// //float coef ( reflected.x - reflected.y ) -1/-0.5 (x)   0/-0.5 (y) 
+	// if ( reflected.z < -0.5 || ( reflected.z < -0.1 && reflected.x > -1.0 && reflected.x < -0.5 && reflected.y < 0.0 && reflected.y > -0.5) )
+	// 	calulateTexture(uCubeTexture4, reflected, 3);
+
+	
 }
 

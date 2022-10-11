@@ -21,6 +21,8 @@ var PLANE = null;
 // EnvMap
 var ENVMAP = null;
 
+var CubeSize = 10.0;
+
 // =====================================================
 // OBJET 3D, lecture fichier obj
 // =====================================================
@@ -57,6 +59,10 @@ class objmesh {
 		this.shader.InverseRMatrixUniform = gl.getUniformLocation(this.shader, "uInverseRMatrix");
 		this.shader.mvMatrixUniform = gl.getUniformLocation(this.shader, "uMVMatrix");
 		this.shader.pMatrixUniform = gl.getUniformLocation(this.shader, "uPMatrix");
+
+		
+		this.shader.uCubeSizeTexture = gl.getUniformLocation(this.shader, "uCubeSizeTexture");
+		gl.uniform1f(this.shader.uCubeSizeTexture, CubeSize)
 
 		// pass all the sampler of the cube
 		this.shader.sampler0 = gl.getUniformLocation(this.shader, "uCubeTexture0");
@@ -199,13 +205,12 @@ class envMap {
 		this.nbTextures = 0
 		this.textureArray = [];
 		this.indexBuffer = null;
-		this.cubeSize = 50;
 		this.initAll();
 	}
 
 	// --------------------------------------------
 	initAll() {
-		var size = this.cubeSize;
+		var size = CubeSize;
 
 
 		/*
@@ -407,7 +412,7 @@ class envMap {
 		gl.uniformMatrix4fv(this.shader.mvMatrixUniform, false, mvMatrix);
 
 		this.shader.uCubeSize = gl.getUniformLocation(this.shader, "uCubeSize");
-		gl.uniform1f(this.shader.uCubeSize, this.cubeSize)
+		gl.uniform1f(this.shader.uCubeSize, CubeSize)
 
 
 		/////////////////////////////// All sampler
