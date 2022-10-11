@@ -17,56 +17,6 @@ uniform sampler2D uCubeTexture5;
 uniform float uCubeSizeTexture;
 
 
-void calulateTexture(sampler2D s, vec3 reflected, int case) {
-
-	// X (left and right)
-	if ( case == 1 ) {
-		if ( reflected.y < 0.0 ) {
-			if ( reflected.z > 0.0 )
-				gl_FragColor = texture2D(s, vec2(0.5 + reflected.y/2.0, 0.5 + reflected.z/2.0));
-			else
-				gl_FragColor = texture2D(s, vec2(0.5 + reflected.y/2.0, 0.5 + reflected.z/2.0));
-		}else{
-			if ( reflected.z > 0.0 )
-				gl_FragColor = texture2D(s, vec2(0.5 + reflected.y/2.0, 0.5 + reflected.z/2.0));
-			else
-				gl_FragColor = texture2D(s, vec2(0.5 + reflected.y/2.0, 0.5 + reflected.z/2.0));
-		}
-
-	
-	// Y (forward and backward)
-	}else if ( case == 2 ) {
-		if ( reflected.x < 0.0 ) {
-			if ( reflected.z > 0.0 )
-				gl_FragColor = texture2D(s, vec2(0.5 + reflected.x/2.0, 0.5 + reflected.z/2.0));
-			else
-				gl_FragColor = texture2D(s, vec2(0.5 + reflected.x/2.0, 0.5 + reflected.z/2.0));
-		}else{
-			if ( reflected.z > 0.0 )
-				gl_FragColor = texture2D(s, vec2(0.5 + reflected.x/2.0, 0.5 + reflected.z/2.0));
-			else
-				gl_FragColor = texture2D(s, vec2(0.5 + reflected.x/2.0, 0.5 + reflected.z/2.0));
-		}
-	
-	
-
-	// Z (top and bottom)
-	}else if ( case == 3 ) {
-		if ( reflected.x < 0.0 ) {
-			if ( reflected.y > 0.0 )
-				gl_FragColor = texture2D(s, vec2(0.5 + reflected.x/2.0, 0.5 + reflected.y/2.0));
-			else
-				gl_FragColor = texture2D(s, vec2(0.5 + reflected.x/2.0, 0.5 + reflected.y/2.0));
-		}else{
-			if ( reflected.y > 0.0 )
-				gl_FragColor = texture2D(s, vec2(0.5 + reflected.x/2.0, 0.5 + reflected.y/2.0));
-			else
-				gl_FragColor = texture2D(s, vec2(0.5 + reflected.x/2.0, 0.5 + reflected.y/2.0));
-		}
-	}
-}
-
-
 // ==============================================
 void main(void)
 {
@@ -101,47 +51,29 @@ void main(void)
 	float tBackward = (-uCubeSizeTexture - pos3D_scene.y)/reflected.y;
 
 	vec3 interBottom = pos3D_scene + reflected * tBottom;
-	if (  tBottom > 0.0 && interBottom.z == -uCubeSizeTexture && abs(interBottom.x) <= uCubeSizeTexture && abs(interBottom.y) <= uCubeSizeTexture )
+	vec3 interTop = pos3D_scene + reflected * tTop;
+	vec3 interRight = pos3D_scene + reflected * tRight;
+	vec3 interLeft = pos3D_scene + reflected * tLeft;
+	vec3 interForward = pos3D_scene + reflected * tForward;
+	vec3 interBackward = pos3D_scene + reflected * tBackward;
+
+
+	if ( tBottom > 0.0 && /*interBottom.z == -uCubeSizeTexture &&*/ abs(interBottom.x) <= uCubeSizeTexture && abs(interBottom.y) <= uCubeSizeTexture )
 		gl_FragColor = texture2D(uCubeTexture4, vec2(0.5 + interBottom.x/(2.0*uCubeSizeTexture), 0.5 + interBottom.y/(2.0*uCubeSizeTexture)));
-		//gl_FragColor = vec4(0.8,0.4,0.2,1.0);
-		
-
-
-
-
-
-
-
-	// // if ray go to the right
-	// if ( reflected.x > 0.5 && reflected.y < 0.5 && reflected.y > -0.5 && reflected.z < 0.5 && reflected.z > -0.5 )
-	// 		calulateTexture(uCubeTexture5, reflected, 1);
-	// // if ray go to the left
-	// else if ( reflected.x < -0.5 && reflected.y < 0.5 && reflected.y > -0.5 && reflected.z < 0.5 && reflected.z > -0.5 )
-	// 		calulateTexture(uCubeTexture1, reflected, 1);
+	else if ( tTop > 0.0 && /*interTop.z == uCubeSizeTexture &&*/ abs(interTop.x) <= uCubeSizeTexture && abs(interTop.y) <= uCubeSizeTexture )
+		gl_FragColor = texture2D(uCubeTexture2, vec2(0.5 + (interTop.x)/(2.0*uCubeSizeTexture), 0.5 + (-interTop.y)/(2.0*uCubeSizeTexture)));
 	
-	// // if ray go to the forward
-	// else if ( reflected.y > 0.5 && reflected.x < 0.5 && reflected.x > -0.5 && reflected.z < 0.5 && reflected.z > -0.5 )
-	// 	calulateTexture(uCubeTexture0, reflected, 2);
-
-	// // if ray go to the backwards
-	// else if (reflected.y < -0.5 && reflected.x < 0.5 && reflected.x > -0.5 && reflected.z < 0.5 && reflected.z > -0.5 )
-	// 	calulateTexture(uCubeTexture3, reflected, 2);
-
-	// // if ray go to the top
-	// else if ( reflected.z > 0.5 && reflected.x < 0.5 && reflected.x > -0.5 && reflected.y < 0.5 && reflected.y > -0.5 )
-	// 	calulateTexture(uCubeTexture2, reflected, 3);
-
-	// // if ray go to the bottom
-	// else if (reflected.z < -0.5 && reflected.x < 0.5 && reflected.x > -0.5 && reflected.y < 0.5 && reflected.y > -0.5 ) 
-	// 	calulateTexture(uCubeTexture4, reflected, 3);
 	
-	 
-	// //if (reflected.z < -0.5 && reflected.x < 0.5 && reflected.x > -0.5 && reflected.y < 0.5 && reflected.y > -0.5 ) 
-	// 	//gl_FragColor = vec4(0.3,0.1,0.1,1.0);
+	else if ( tRight > 0.0 && /*interRight.x == uCubeSizeTexture &&*/ abs(interRight.z) <= uCubeSizeTexture && abs(interRight.y) <= uCubeSizeTexture )
+		gl_FragColor = texture2D(uCubeTexture1, vec2(0.5 + (-interRight.y)/(2.0*uCubeSizeTexture), 0.5 + interRight.z/(2.0*uCubeSizeTexture)));
+	else if ( tLeft > 0.0 && /*interLeft.x == -uCubeSizeTexture &&*/ abs(interLeft.z) <= uCubeSizeTexture && abs(interLeft.y) <= uCubeSizeTexture )
+		gl_FragColor = texture2D(uCubeTexture5, vec2(0.5 + interLeft.y/(2.0*uCubeSizeTexture), 0.5 + interLeft.z/(2.0*uCubeSizeTexture)));
+	
 
-	// //float coef ( reflected.x - reflected.y ) -1/-0.5 (x)   0/-0.5 (y) 
-	// if ( reflected.z < -0.5 || ( reflected.z < -0.1 && reflected.x > -1.0 && reflected.x < -0.5 && reflected.y < 0.0 && reflected.y > -0.5) )
-	// 	calulateTexture(uCubeTexture4, reflected, 3);
+	else if ( tForward > 0.0 && /*interForward.y == uCubeSizeTexture &&*/ abs(interForward.x) <= uCubeSizeTexture && abs(interForward.z) <= uCubeSizeTexture )
+		gl_FragColor = texture2D(uCubeTexture0, vec2(0.5 + interForward.x/(2.0*uCubeSizeTexture), 0.5 + interForward.z/(2.0*uCubeSizeTexture)));	
+	else if ( tBackward > 0.0 && /*interBackward.y == -uCubeSizeTexture &&*/ abs(interBackward.x) <= uCubeSizeTexture && abs(interBackward.z) <= uCubeSizeTexture )
+		gl_FragColor = texture2D(uCubeTexture3, vec2(0.5 + (-interBackward.x)/(2.0*uCubeSizeTexture), 0.5 + interBackward.z/(2.0*uCubeSizeTexture)));
 
 	
 }

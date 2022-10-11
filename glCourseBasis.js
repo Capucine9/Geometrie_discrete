@@ -367,7 +367,9 @@ class envMap {
 
     for (var i=0; i<filesTextures.length; i++){
         var texImage = new Image();
-        var chemin = "./textures/urban-skyboxes/CNTower/";
+        //var chemin = "./textures/urban-skyboxes/CNTower/";
+		//var chemin = "./textures/urban-skyboxes/ForbiddenCity/";
+		var chemin = "./textures/urban-skyboxes/Medborgarplatsen/";
         texImage.src = chemin + filesTextures[i];
         var texture = gl.createTexture();
         texture.image = texImage;
@@ -604,7 +606,7 @@ function drawScene() {
 	gl.clear(gl.COLOR_BUFFER_BIT);
 
 	ENVMAP.draw();
-	PLANE.draw();
+	//PLANE.draw();
 	//OBJ1.draw();
 	//OBJ2.draw();
 	//OBJ3.draw();
