@@ -15,6 +15,7 @@ uniform sampler2D uCubeTexture4;
 uniform sampler2D uCubeTexture5;
 
 uniform vec3 uType;
+uniform vec3 uColor;
 
 uniform float uCubeSizeTexture;
 
@@ -64,7 +65,7 @@ vec4 findTexturePixel (vec3 direction) {
 
 
 vec4 computeLambert(vec4 point) {
-	vec3 col = vec3(0.4,0.9,0.4) * dot(N,normalize(vec3(-pos3D))); // Lambert rendering, eye light source
+	vec3 col = uColor * dot(N,normalize(vec3(-pos3D))); // Lambert rendering, eye light source
 	return vec4(col,1.0);
 }
 

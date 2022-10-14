@@ -23,7 +23,7 @@ var ENVMAP = null;
 
 var CubeSize = 50.0;
 var type = new Float32Array([1.0,0.0,0.0]);
-//var color = vec3(0.0,0.0,1.0);
+var color = new Float32Array([0.0,0.0,1.0]);
 var chemin = null;
 
 // =====================================================
@@ -66,6 +66,8 @@ class objmesh {
 		
 		this.shader.uType = gl.getUniformLocation(this.shader, "uType");
 		gl.uniform3fv(this.shader.uType, type);
+		this.shader.uCol = gl.getUniformLocation(this.shader, "uColor");
+		gl.uniform3fv(this.shader.uCol, color);
 
 		this.shader.uCubeSizeTexture = gl.getUniformLocation(this.shader, "uCubeSizeTexture");
 		gl.uniform1f(this.shader.uCubeSizeTexture, CubeSize)
@@ -398,7 +400,6 @@ class envMap {
 
 	newTexture() {
 		var filesTextures = ["posz.jpg", "posx.jpg", "posy.jpg", "negz.jpg", "negy.jpg", "negx.jpg"];
-		console.log("new"+chemin);
 		this.nbTextures = 0;
 		for (var i=0; i<filesTextures.length; i++){
 			this.textureArray[i].image = new Image();
@@ -635,11 +636,6 @@ function drawScene() {
 	gl.clear(gl.COLOR_BUFFER_BIT);
 
 	ENVMAP.draw();
-	//PLANE.draw();
-	//OBJ1.draw();
-	//OBJ2.draw();
-	//OBJ3.draw();
-	//OBJ4.draw();
 	
 	// Recuperation du type de l'objet
 	var type_material = document.querySelector('input[name="type"]:checked').value;
@@ -664,16 +660,30 @@ function drawScene() {
 
 
 	// Recuperation de la couleur à afficher
-	// var col = document.querySelector('input[name="color"]:checked').value;
-	// console.log(col)
-	// if ( object == "bunny")
-	// 	OBJ1.draw();
-	// else if ( object == "mustang")
-	// 	OBJ2.draw();
-	// else if ( object == "porsche")
-	// 	OBJ3.draw();
-	// else if ( object == "sphere")
-	// 	OBJ4.draw();
+	var e_c = document.getElementById("couleur");
+	var tmp_c =  e_c.options[e_c.selectedIndex].value;
+	if ( tmp_c == "bleu")
+		color = new Float32Array([0.0,0.0,1.0]);
+	else if ( tmp_c == "noir")
+		color = new Float32Array([0.0,0.0,0.0]);
+	else if ( tmp_c == "marron")
+		color = new Float32Array([0.5,0.0,0.0]);
+	else if ( tmp_c == "vert")
+		color = new Float32Array([0.0,1.0,0.0]);
+	else if ( tmp_c == "gris")
+		color = new Float32Array([0.5,0.5,0.5]);
+	else if ( tmp_c == "orange")
+		color = new Float32Array([0.9,0.5,0.13]);
+	else if ( tmp_c == "rose")
+		color = new Float32Array([1.0,0.75,0.79]);
+	else if ( tmp_c == "violet")
+		color = new Float32Array([0.5,0.0,0.5]);
+	else if ( tmp_c == "rouge")
+		color = new Float32Array([1.0,0.0,0.0]);
+	else if ( tmp_c == "blanc")
+		color = new Float32Array([1.0,1.0,1.0]);
+	else if ( tmp_c == "jaune")
+		color = new Float32Array([1.0,1.0,0.0]);
 
 
 	// Recuperation de la skybox a afficher
@@ -683,15 +693,6 @@ function drawScene() {
 	if ( tmp != chemin && ENVMAP.textureArray != null ) {
 		chemin = tmp;
 		ENVMAP.newTexture();
-		/*
-		if ( object == "bunny")
-			OBJ1.newTexture();
-		else if ( object == "mustang")
-			OBJ2.newTexture();
-		else if ( object == "porsche")
-			OBJ3.newTexture();
-		else if ( object == "sphere")
-			OBJ4.newTexture();*/
 	}
 	
 }
