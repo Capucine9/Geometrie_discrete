@@ -23,6 +23,8 @@ var ENVMAP = null;
 
 var CubeSize = 50.0;
 var type = new Float32Array([1.0,0.0,0.0]);
+//var color = vec3(0.0,0.0,1.0);
+var chemin = null;
 
 // =====================================================
 // OBJET 3D, lecture fichier obj
@@ -207,7 +209,7 @@ class envMap {
 		this.loaded=-1;
 		this.shader=null;
 		this.nbTextures = 0
-		this.textureArray = [];
+		this.textureArray = null;
 		this.indexBuffer = null;
 		this.initAll();
 	}
@@ -367,33 +369,55 @@ class envMap {
 
 	// -------------------------------------
 	initTextures() {
-    var filesTextures = ["posz.jpg", "posx.jpg", "posy.jpg", "negz.jpg", "negy.jpg", "negx.jpg"];
+		var filesTextures = ["posz.jpg", "posx.jpg", "posy.jpg", "negz.jpg", "negy.jpg", "negx.jpg"];
+		this.textureArray = [];
 
-    for (var i=0; i<filesTextures.length; i++){
-        var texImage = new Image();
-        //var chemin = "./textures/urban-skyboxes/CNTower/";
-		//var chemin = "./textures/urban-skyboxes/ForbiddenCity/";
-		//var chemin = "./textures/park-skyboxes/Skansen/";
-		var chemin = "./textures/SanFrancisco3/";
-        texImage.src = chemin + filesTextures[i];
-        var texture = gl.createTexture();
-        texture.image = texImage;
+		for (var i=0; i<filesTextures.length; i++){
+			var texImage = new Image();
+			if (chemin == null)
+				chemin = "./textures/SanFrancisco3/";
+			texImage.src = chemin + filesTextures[i];
+			var texture = gl.createTexture();
+			texture.image = texImage;
 
-        this.textureArray.push(texture);
+			this.textureArray.push(texture);
 
-		// TODO : verify texture id (in the array) and linked image
-        texture.image.onload = () => {
-            gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-            gl.bindTexture(gl.TEXTURE_2D, this.textureArray[this.nbTextures]);
-            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, this.textureArray[this.nbTextures].image);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-            this.nbTextures ++;
-        }
-    }
-}
+			// TODO : verify texture id (in the array) and linked image
+			texture.image.onload = () => {
+				gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+				gl.bindTexture(gl.TEXTURE_2D, this.textureArray[this.nbTextures]);
+				gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, this.textureArray[this.nbTextures].image);
+				gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+				gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+				gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+				gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+				this.nbTextures ++;
+			}
+		}
+	}
+
+	newTexture() {
+		var filesTextures = ["posz.jpg", "posx.jpg", "posy.jpg", "negz.jpg", "negy.jpg", "negx.jpg"];
+		console.log("new"+chemin);
+		this.nbTextures = 0;
+		for (var i=0; i<filesTextures.length; i++){
+			this.textureArray[i].image = new Image();
+			this.textureArray[i].image.src = chemin + filesTextures[i];
+
+
+			// TODO : verify texture id (in the array) and linked image
+			this.textureArray[i].image.onload = () => {
+				gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+				gl.bindTexture(gl.TEXTURE_2D, this.textureArray[this.nbTextures]);
+				gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, this.textureArray[this.nbTextures].image);
+				gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+				gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+				gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+				gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+				this.nbTextures++;
+			}
+		}
+	}
 
 
 	// --------------------------------------------
@@ -615,7 +639,7 @@ function drawScene() {
 	//OBJ1.draw();
 	//OBJ2.draw();
 	//OBJ3.draw();
-	OBJ4.draw();
+	//OBJ4.draw();
 	
 	// Recuperation du type de l'objet
 	var type_material = document.querySelector('input[name="type"]:checked').value;
@@ -625,5 +649,49 @@ function drawScene() {
 		type = new Float32Array([0.0,1.0,0.0])
 	else if ( type_material == "miroir")
 		type = new Float32Array([0.0,0.0,1.0])
+
+
+	// Recuperation de l'objet a afficher
+	var object = document.querySelector('input[name="object"]:checked').value;
+	if ( object == "bunny")
+		OBJ1.draw();
+	else if ( object == "mustang")
+		OBJ2.draw();
+	else if ( object == "porsche")
+		OBJ3.draw();
+	else if ( object == "sphere")
+		OBJ4.draw();
+
+
+	// Recuperation de la couleur à afficher
+	// var col = document.querySelector('input[name="color"]:checked').value;
+	// console.log(col)
+	// if ( object == "bunny")
+	// 	OBJ1.draw();
+	// else if ( object == "mustang")
+	// 	OBJ2.draw();
+	// else if ( object == "porsche")
+	// 	OBJ3.draw();
+	// else if ( object == "sphere")
+	// 	OBJ4.draw();
+
+
+	// Recuperation de la skybox a afficher
+	var e = document.getElementById("skybox");
+	var value = e.value;
+	var tmp =  "./textures/" + e.options[e.selectedIndex].value;
+	if ( tmp != chemin && ENVMAP.textureArray != null ) {
+		chemin = tmp;
+		ENVMAP.newTexture();
+		/*
+		if ( object == "bunny")
+			OBJ1.newTexture();
+		else if ( object == "mustang")
+			OBJ2.newTexture();
+		else if ( object == "porsche")
+			OBJ3.newTexture();
+		else if ( object == "sphere")
+			OBJ4.newTexture();*/
+	}
 	
 }
