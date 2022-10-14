@@ -9,11 +9,28 @@
 	<script type="text/javascript" src="glCourseBasis.js"></script>
 	<script type="text/javascript" src="objLoader.js"></script>
 
-	<!--fiche css-->
+	<!-- Fiche css -->
 	<style> 
 		fieldset{
 			position: absolute;
+			height: 35px;
 		}
+
+		.couleur{
+			margin-left: 270px;
+			width: 100px;
+		}
+
+		.object{
+			margin-top:52px ;
+		}
+
+		.skybox{
+			margin-top: 52px;
+			margin-left: 322px;
+			width: 120px;
+		}
+
 	</style>
 
 </head>
@@ -23,15 +40,51 @@
 	<canvas id="WebGL-test" style="border:none;" width="800" height="600"></canvas>
 	<br><br>
 
+	<!-- Changement du type de materiel -->
 	<fieldset>
-		<legend>Material type</legend>
-		<input type="radio" name="type" value="opaque" checked/><label for="opaque">Opaque</label>
-		<input type="radio" name="type" value="transparent"/><label for="transparent"></label>Transparent</label>
-		<input type="radio" name="type" value="miroir"/><label for="miroir"></label>Mirror</label>
+		<legend><FONT size="4px">Material type</FONT></legend>
+		<input type='radio' name="type" value="opaque" checked/><label for="opaque">Opaque</label>
+		<input type='radio' name="type" value="transparent"/><label for="transparent"></label>Transparent</label>
+		<input type='radio' name="type" value="miroir"/><label for="miroir"></label>Mirror</label>
 	</fieldset>
 
+	<!-- Changement de la couleur de l'objet -->
+	<fieldset class="couleur">
+		<legend><FONT size="4px">Object color</FONT></legend>
+		<select name="couleur">
+			<option value="bleu" style="color:white; background:blue">Blue </option>
+			<option value="noir" style="color:white; background:black" >Black </option>
+			<option value="marron" style="color:white; background:brown" >Brown </option>
+			<option value="vert" style="color:white; background:green">Green </option>
+			<option value="gris" style="background:grey">Grey </option>
+			<option value="orange" style="background:orange">Orange </option>
+			<option value="rose" style="background:pink">Pink </option>
+			<option value="violet" style="color:white; background:purple">Purple </option>
+			<option value="rouge" style="background:red">Red </option>
+			<option value="blanc" style="background:white">White </option>
+			<option value="jaune" style="background:yellow">Yellow </option>
+		</select>
+	</fieldset>
 
+	<!-- Changement de l'objet -->
+	<fieldset class="object">
+		<legend><FONT size="4px">Object</FONT></legend>
+		<input type='radio' name="object" value="bunny" checked/><label for="bunny">Bunny</label>
+		<input type='radio' name="object" value="mustang"/><label for="mustang"></label>Mustang</label>
+		<input type='radio' name="object" value="porsche"/><label for="porsche"></label>Porsche</label>
+		<input type='radio' name="sphere" value="sphere"/><label for="sphere"></label>Sphere</label>
+	</fieldset>
 
+	<!-- Changement de la skybox -->
+	<fieldset class="skybox">
+		<legend><FONT size="4px">Skybox</FONT></legend>
+		<select name="skybox">
+			<option value="SanFrancisco3">San Francisco </option>
+			<option value="FishermansBastion">Fishermans Bastion </option>
+			<option value="Colosseum">Colosseum </option>
+			<option value="Medborgarplatsen">Medborgarplatsen </option>
+		</select>
+	</fieldset>
 
 </body>
 
